@@ -7,8 +7,5 @@ export class EmailCheck {
   email: string;
 
   @Column()
-  check: boolean;
-
-  @Column()
-  userNum: number;
+  code: string;
 }
