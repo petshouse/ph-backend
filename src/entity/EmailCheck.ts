@@ -1,3 +1,4 @@
+import { Col } from "sequelize/types/lib/utils";
 import {Entity, PrimaryGeneratedColumn, Column, PrimaryColumn} from "typeorm";
 
 @Entity()
@@ -7,5 +8,8 @@ export class EmailCheck {
   email: string;
 
   @Column()
-  code: string;
+  code: number;
+
+  @Column({"default" : false})
+  isCheck: boolean;
 }

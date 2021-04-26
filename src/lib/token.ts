@@ -1,14 +1,15 @@
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
+import { tokenToString } from "typescript";
 dotenv.config();
 
 export const jwtsign = (async (id) => {
-  const token : string = jwt.sign({ id: `${id}` },process.env.jwtkey,{expiresIn: '30m'});
+  const token : string = jwt.sign({ id: `${id}` },process.env.jwtkey);
   return token;
 });
 
 export const jwtrefresh = (async (email) => {
-  const refreshToken = jwt.sign({email : `${email}`},process.env.jwtkey,{expiresIn: "14d"});
+  const refreshToken = jwt.sign({email : `${email}`},process.env.jwtkey);
   return refreshToken;
 });
 

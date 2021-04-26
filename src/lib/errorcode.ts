@@ -26,6 +26,22 @@ export const errorCode = (async (code) => {
       };
       break;
 
+    case 106:
+      body = {
+        "errorMessage" : "invalid_account",
+        "errorCode" : "E106",
+        "errorDescription" : "인증 코드가 일치하지 않음"
+       };
+       break;
+
+    case 107:
+      body = {
+        "errorMessage" : "invalid_account",
+        "errorCode" : "E107",
+        "errorDescription" : "이메일 인증 필요"
+      };
+      break;
+
     case 108:
       body = {
         "errorMessage" : "invalid_account",
