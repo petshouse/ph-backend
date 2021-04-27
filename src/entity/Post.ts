@@ -7,7 +7,7 @@ export class Post {
   num: number;
   
   @Column()
-  userNum: number;
+  user: string;
 
   @Column()
   description: string;
@@ -21,10 +21,10 @@ export class Post {
   @Column()
   area: string;
   
-  @Column()
+  @Column({ default : "Receipt" })
   process: string;
 
-  @Column()
+  @Column({ default: 0 })
   totalJoin: number;
   
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP"} )

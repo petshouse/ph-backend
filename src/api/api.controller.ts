@@ -243,13 +243,57 @@ export const loadImage = (async (ctx) => {
 });
 
 export const loadPost = (async (ctx) => { 
+  const authentication = await jwtverify(ctx.header.accesstoken);
+  const email = ctx.header.email;
+
+  let body : object, status : number, post : any;
+
+  if (authentication !== 'error') {
+    const user = await getConnection()
+    .createQueryBuilder()
+    .select("user")
+    .from(User, "user")
+    .where("user.uid = :uid", { uid: firebaseToken[0] })
+    .getOne();
+
+    if (user !== undefined) {
+      if (userUid !== undefined) {
+        post = await getConnection()
+        .createQueryBuilder()
+        .select(["post.userUid", "post.like", "post.view", "post.description", "post.mediaName", "post.date"])
+        .from(Post, "post")
+        .where("post.userUid = :uid", { uid: userUid })
+        .getMany();
+      }else{
+        post = await getConnection()
+        .createQueryBuilder()
+        .select(["post.userUid", "post.like", "post.view", "post.description", "post.mediaName", "post.date"])
+        .from(Post, "post")
+        .orderBy("RAND()")
+        .getOne();
+      }
+      
+      status = 200;
+      body = post;
+    }else{
+      status = 403;
+      body = await errorCode(303);
+    }
+  }else{
+    status = 412;
+    body = await errorCode(302);
+  }
+
+  ctx.status = status;
+  ctx.body = body;
 });
 
 export const writePost = (async (ctx) => {
   const accesstoken = ctx.header.accesstoken;
-  const { title, description, mediaId } = ctx.request.body;
+  const { title, description, mediaId, area } = ctx.request.body;
 
   let status : number, body : object;
+  const email :any = jwtverify(accesstoken);
 
   const token = await getConnection()
   .createQueryBuilder()
@@ -264,9 +308,11 @@ export const writePost = (async (ctx) => {
     .insert()
     .into(Post)
     .values({
+      user: email,
       title: title,
       description: description,
-      mediaName: mediaId
+      mediaName: mediaId,
+      area: area
     })
     .execute()
 

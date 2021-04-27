@@ -10,6 +10,6 @@ export class EmailCheck {
   @Column()
   code: number;
 
-  @Column({"default" : false})
+  @Column({ type: 'boolean',  default : false })
   isCheck: boolean;
 }
