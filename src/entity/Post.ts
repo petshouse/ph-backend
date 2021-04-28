@@ -7,7 +7,7 @@ export class Post {
   num: number;
   
   @Column()
-  user: string;
+  user: number;
 
   @Column()
   description: string;
@@ -21,7 +21,7 @@ export class Post {
   @Column()
   area: string;
   
-  @Column({ default : "Receipt" })
+  @Column({ default : "Not accepted" })
   process: string;
 
   @Column({ default: 0 })

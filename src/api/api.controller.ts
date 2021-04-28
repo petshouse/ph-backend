@@ -98,8 +98,8 @@ export const login = (async (ctx) => {
     .getOne()
 
     if(emailcheck["isCheck"] === true && emailcheck !== undefined){
-      accessToken = jwtsign(email);
-      refreshToken = jwtrefresh(email);
+      accessToken = await jwtsign(user["num"]);
+      refreshToken = await jwtrefresh(user["num"]);
 
       await getConnection()
       .createQueryBuilder()
@@ -244,30 +244,30 @@ export const loadImage = (async (ctx) => {
 
 export const loadPost = (async (ctx) => { 
   const authentication = await jwtverify(ctx.header.accesstoken);
-  const email = ctx.header.email;
+  const uid = ctx.header.uid;
 
   let body : object, status : number, post : any;
 
-  if (authentication !== 'error') {
+  if (authentication != 'error') {
     const user = await getConnection()
     .createQueryBuilder()
     .select("user")
     .from(User, "user")
-    .where("user.uid = :uid", { uid: firebaseToken[0] })
+    .where("user.num = :uid", { uid: uid })
     .getOne();
 
     if (user !== undefined) {
-      if (userUid !== undefined) {
+      if (uid !== undefined) {
         post = await getConnection()
         .createQueryBuilder()
-        .select(["post.userUid", "post.like", "post.view", "post.description", "post.mediaName", "post.date"])
+        .select(["post.num", "post.user", "post.title", "post.description", "post.mediaName", "post.date", "post.totalJoin", "post.area"])
         .from(Post, "post")
-        .where("post.userUid = :uid", { uid: userUid })
+        .where("post.user = :uid", { uid: uid })
         .getMany();
       }else{
         post = await getConnection()
         .createQueryBuilder()
-        .select(["post.userUid", "post.like", "post.view", "post.description", "post.mediaName", "post.date"])
+        .select(["post.num", "post.user", "post.title", "post.description", "post.mediaName", "post.date", "post.totalJoin", "post.area"])
         .from(Post, "post")
         .orderBy("RAND()")
         .getOne();
@@ -293,7 +293,7 @@ export const writePost = (async (ctx) => {
   const { title, description, mediaId, area } = ctx.request.body;
 
   let status : number, body : object;
-  const email :any = jwtverify(accesstoken);
+  const uid:any = await jwtverify(accesstoken);
 
   const token = await getConnection()
   .createQueryBuilder()
@@ -308,7 +308,7 @@ export const writePost = (async (ctx) => {
     .insert()
     .into(Post)
     .values({
-      user: email,
+      user: uid,
       title: title,
       description: description,
       mediaName: mediaId,
