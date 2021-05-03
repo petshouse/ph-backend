@@ -260,14 +260,14 @@ export const loadPost = (async (ctx) => {
       if (uid !== undefined) {
         post = await getConnection()
         .createQueryBuilder()
-        .select(["post.num", "post.user", "post.title", "post.description", "post.mediaName", "post.date", "post.totalJoin", "post.area"])
+        .select(["post.num", "post.user", "post.title", "post.description", "post.mediaName", "post.date", "post.totalJoin", "post.area", "post.process"])
         .from(Post, "post")
         .where("post.user = :uid", { uid: uid })
         .getMany();
       }else{
         post = await getConnection()
         .createQueryBuilder()
-        .select(["post.num", "post.user", "post.title", "post.description", "post.mediaName", "post.date", "post.totalJoin", "post.area"])
+        .select(["post.num", "post.user", "post.title", "post.description", "post.mediaName", "post.date", "post.totalJoin", "post.area", "post.process"])
         .from(Post, "post")
         .orderBy("RAND()")
         .getOne();
