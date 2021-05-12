@@ -97,7 +97,7 @@ export const login = (async (ctx) => {
     .where("emailcheck.email = :email", {email : email})
     .getOne()
 
-    if(emailcheck["isCheck"] === true && emailcheck !== undefined){
+    if(emailcheck !== undefined){
       accessToken = await jwtsign(user["num"]);
       refreshToken = await jwtrefresh(user["num"]);
 
