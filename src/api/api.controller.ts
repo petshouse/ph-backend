@@ -98,20 +98,40 @@ export const login = (async (ctx) => {
     .getOne()
 
     if(emailcheck !== undefined){
-      accessToken = await jwtsign(user["num"]);
-      refreshToken = await jwtrefresh(user["num"]);
+      const accessToken = await jwtsign(user["num"]);
+      const refreshToken = await jwtrefresh(user["num"]);
 
-      await getConnection()
+      const token = await getConnection()
       .createQueryBuilder()
-      .insert()
-      .into(Token)
-      .values({ 
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-        email: email
-      })
-      .execute();
-      
+      .select("token")
+      .from(Token, "token")
+      .where("token.email = :email", {email : email})
+      .getOne()
+
+      if(token === undefined){
+        await getConnection()
+        .createQueryBuilder()
+        .insert()
+        .into(Token)
+        .values({ 
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          email: email
+        })
+        .execute();
+      } else {
+        await getConnection()
+        .createQueryBuilder()
+        .update(Token)
+        .set({ 
+          accessToken: accessToken,
+          refreshToken: refreshToken
+        })
+        .where("email = :email", {email : email})
+        .execute();
+      }
+
+
       status = 200;
       body = {"accessToken" : accessToken, "refreshToken" : refreshToken};
     }else{
