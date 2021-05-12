@@ -78,7 +78,7 @@ export const login = (async (ctx) => {
   let status : number, body : object;
   let accessToken, refreshToken;
 
-  const pass = crypto.createHmac('sha256', process.env.secret).update(`${password}`).digest('hex');
+ // const pass = crypto.createHmac('sha256', process.env.secret).update(`${password}`).digest('hex');
   
 
   const user = await getConnection()
@@ -86,7 +86,7 @@ export const login = (async (ctx) => {
   .select("user")
   .from(User, "user")
   .where("user.email = :email", { email : email })
-  .andWhere("user.password = :password", {password : pass})
+  .andWhere("user.password = :password", {password : password})
   .getOne()
 
   if(user !== undefined){
