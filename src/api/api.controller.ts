@@ -162,36 +162,25 @@ export const emailSend = (async (ctx) => {
    	code = code - 100000;
 	}
 
-  const user = await getConnection()
+  await transporter.sendMail({
+    from: process.env.MAILID,
+    to: `${email}`,
+    subject: 'Your Email Verification Code',
+    text: `${code}`
+  });
+
+  await getConnection()
   .createQueryBuilder()
-  .select("user")
-  .from(User, "user")
-  .where("user.email = :email", { email : email })
-  .getOne()
+  .insert()
+  .into(EmailCheck)
+  .values({
+    email : email,
+    code : code
+  })
+  .execute()
 
-  if(user !== undefined){
-    await transporter.sendMail({
-      from: process.env.MAILID,
-      to: `${email}`,
-      subject: 'Your Email Verification Code',
-      text: `${code}`
-    });
-
-    await getConnection()
-    .createQueryBuilder()
-    .insert()
-    .into(EmailCheck)
-    .values({
-      email : email,
-      code : code
-    })
-
-    status = 200;
-    body = {}
-  } else {
-    status = 412;
-    body = errorCode(108);
-  }
+  status = 200;
+  body = {};
 
 
   ctx.status = status;
