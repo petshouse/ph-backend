@@ -1,23 +1,39 @@
 import Router from '@koa/router';
-import multer from '@koa/multer';
+import multer from 'multer';
+import multerS3 from 'multer-s3';
+import aws from 'aws-sdk';
+aws.config.loadFromPath(__dirname + '/../../s3.json');
 
+const s3 = new aws.S3();
 const api = new Router();
-const storage = multer.diskStorage({
-  destination: async (req, file, cb) => { cb(null, './files') },
-  filename: async (req, file, cb) => { cb(null,`${Date.now()}-${file.originalname}`) }
-});
+
+// const storage = multer.diskStorage({
+//   destination: async (req, file, cb) => { cb(null, './files') },
+//   filename: async (req, file, cb) => { cb(null,`${Date.now()}-${file.originalname}`) }
+// });
 
 const fileFilter = async (req, file, cb) => {
   let typeArray = file.mimetype.split('/');
   let fileType = typeArray[1];
   if (fileType == 'jpg' || fileType == 'png' || fileType == 'jpeg' || fileType == 'gif') {
     cb(null, true);
-  }else{
+  }else{  
     cb(null, false)
   }
 }
 
-const upload = multer({ storage: storage, fileFilter: fileFilter });
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: 'petshouse',
+    acl: 'public-read',
+    destination: async (req, file, cb) => { cb(null, './files') },
+    key: async (req, file, cb) => { cb(null,`${Date.now()}-${file.originalname}`) }
+  }),
+  fileFilter: fileFilter
+}, 'NONE');
+
+// const upload = multer({ storage: storage, fileFilter: fileFilter });
 
 import { signUp, login, getToken, checkVerification, emailSend, uploadImage,loadImage, loadPost, writePost } from './api.controller';
 

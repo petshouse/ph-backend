@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@typescript-eslint/parser": "^4.20.0",
-    "aws-sdk": "^2.897.0",
+    "aws-sdk": "^2.906.0",
     "eslint": "^7.24.0",
     "eslint-config-prettier": "^8.1.0",
     "multer-s3": "^2.9.0",
