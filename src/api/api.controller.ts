@@ -61,12 +61,12 @@ export const signUp = (async (ctx) => {
         status = 201;
         body = {};
       }else{
-        status = 403;
+        status = 412;
         body = await errorCode(107);
       }
     }
   }else{
-    status = 403;
+    status = 412;
     body = await errorCode(102);
   }
 
@@ -214,6 +214,7 @@ export const checkVerification = (async (ctx) => {
 
   let status : number, body : object;
 
+  
   const verification = await getConnection()
   .createQueryBuilder()
   .select("email")
@@ -242,9 +243,13 @@ export const checkVerification = (async (ctx) => {
 });
 
 export const uploadImage = (async (ctx) => { 
+  const { accesstoken } = ctx.header.accesstoken;
+  const fileName = ctx.request.file != undefined ? ctx.request.file.filename : undefined;
+  
+
 });
 
-export const loadImage = (async (ctx) => { 
+export const loadImage = (async (ctx) => {
   // try { await send(ctx, path.path, { root: './files/' }); }
   // catch(err){
   //   ctx.status = 404;
@@ -335,4 +340,30 @@ export const writePost = (async (ctx) => {
 
   ctx.status = status;
   ctx.body = body;
+});
+
+export const idCheck = (async (ctx) => {
+  const email = ctx.header.email;
+  let status: number, body : object;
+  let isDuplication: boolean;
+
+  const user =  await getConnection()
+  .createQueryBuilder()
+  .select("user")
+  .from(User, "user")
+  .where("email = :email", {email : email})
+  .getOne()
+
+  if(user !== undefined){
+    isDuplication = true;
+  } else {
+    isDuplication = false;
+  }
+
+  status = 200;
+  body = {"isDuplication" : isDuplication};
+
+  ctx.status = status;
+  ctx.body = body;
+
 });

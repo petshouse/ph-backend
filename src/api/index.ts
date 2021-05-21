@@ -27,7 +27,7 @@ const upload = multer({
     s3: s3,
     bucket: 'petshouse',
     acl: 'public-read',
-    destination: async (req, file, cb) => { cb(null, './files') },
+    destination: async (req, file, cb) => { cb(null, './file') },
     key: async (req, file, cb) => { cb(null,`${Date.now()}-${file.originalname}`) }
   }),
   fileFilter: fileFilter
@@ -35,16 +35,16 @@ const upload = multer({
 
 // const upload = multer({ storage: storage, fileFilter: fileFilter });
 
-import { signUp, login, getToken, checkVerification, emailSend, uploadImage,loadImage, loadPost, writePost } from './api.controller';
+import { signUp, login, getToken, checkVerification, emailSend, uploadImage,loadImage, loadPost, writePost, idCheck } from './api.controller';
 
 api.post('/v1/auth', signUp);
 api.post('/v1/login', login);
 api.get('/v1/auth', getToken);
 api.post('/v1/verification', checkVerification);
 api.post('/v1/emailsend', emailSend);
-api.post('/v1/media', upload.single('media'), uploadImage);
+api.post('/v1/media', upload.array('media', 2), uploadImage);
 api.get('/v1/media/:media', loadImage);
 api.get('/v1/post', loadPost);
 api.post('/v1/post', writePost);
-
+api.get('/v1/id', idCheck);
 export default api
