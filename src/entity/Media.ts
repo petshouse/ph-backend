@@ -4,7 +4,7 @@ import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
 export class Media {
 
   @PrimaryGeneratedColumn()
-  postNum: number;
+  num: number;
   
   @Column()
   mediaName: string;

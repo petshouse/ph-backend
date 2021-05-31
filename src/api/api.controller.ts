@@ -245,16 +245,54 @@ export const checkVerification = (async (ctx) => {
 export const uploadImage = (async (ctx) => { 
   const { accesstoken } = ctx.header.accesstoken;
   const fileName = ctx.request.file != undefined ? ctx.request.file.filename : undefined;
-  
+  let body : object, status : number; 
 
+  const token = await getConnection()
+  .createQueryBuilder()
+  .select("token")
+  .from(Token, "token")
+  .where("accessToken = :accesstoken", {accesstoken : accesstoken})
+  .getOne()
+  if(fileName !== undefined) {
+    if(token !== undefined) {
+        await getConnection()
+        .createQueryBuilder()
+        .insert()
+        .into(Media)
+        .values({
+          mediaName: fileName
+        })
+        .execute();
+
+        status = 201;
+        body = {"filePath" : fileName};
+    } else {
+      status = 412;
+      body = await errorCode(302);
+    }
+  }else {
+    status = 403;
+    body = await errorCode(401);
+  }
 });
 
 export const loadImage = (async (ctx) => {
-  // try { await send(ctx, path.path, { root: './files/' }); }
-  // catch(err){
-  //   ctx.status = 404;
-  //   ctx.body = await errorCode(501);
-  // }
+  const { media } = ctx.params;
+  let body : object, status : number;
+  
+  const path = await getConnection()
+  .createQueryBuilder()
+  .select("media")
+  .from(Media, "media")
+  .where("media.uid = :uid", { uid: media })
+  .orWhere("media.path = :path", { path: media })
+  .getOne();
+
+  try { await send(ctx, path.mediaName, { root: './files/' }); }
+  catch(err){
+    ctx.status = 404;
+    ctx.body = await errorCode(501);
+  }
 });
 
 export const loadPost = (async (ctx) => { 
