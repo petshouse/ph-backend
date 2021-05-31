@@ -1,8 +1,7 @@
 import Router from '@koa/router';
-import multer from 'multer';
+import multer from '@koa/multer';
 
 const api = new Router();
-
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => { cb(null, './files') },
   filename: async (req, file, cb) => { cb(null,`${Date.now()}-${file.originalname}`) }
@@ -11,13 +10,12 @@ const storage = multer.diskStorage({
 const fileFilter = async (req, file, cb) => {
   let typeArray = file.mimetype.split('/');
   let fileType = typeArray[1];
-  if (fileType == 'jpg' || fileType == 'png' || fileType == 'jpeg' || fileType == 'gif') {
+  if (fileType == 'jpg' || fileType == 'png' || fileType == 'jpeg' || fileType == 'gif' || fileType == 'mp4' || fileType == 'avi' || fileType == 'wmv') {
     cb(null, true);
-  }else{  
+  }else{
     cb(null, false)
   }
 }
-
 
 const upload = multer({ storage: storage, fileFilter: fileFilter });
 
@@ -28,7 +26,7 @@ api.post('/v1/login', login);
 api.get('/v1/auth', getToken);
 api.post('/v1/verification', checkVerification);
 api.post('/v1/emailsend', emailSend);
-api.post('/v1/media', upload.array('media', 2), uploadImage);
+api.post('/v1/media', upload.single('media'), uploadImage);
 api.get('/v1/media/:media', loadImage);
 api.get('/v1/post', loadPost);
 api.post('/v1/post', writePost);

@@ -244,6 +244,7 @@ export const checkVerification = (async (ctx) => {
 
 export const uploadImage = (async (ctx) => { 
   const { accesstoken } = ctx.header.accesstoken;
+  const authentication = await jwtverify(ctx.header.accesstoken);
   const fileName = ctx.request.file != undefined ? ctx.request.file.filename : undefined;
   let body : object, status : number; 
 
