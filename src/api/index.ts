@@ -26,7 +26,7 @@ api.post('/v1/login', login);
 api.get('/v1/auth', getToken);
 api.post('/v1/verification', checkVerification);
 api.post('/v1/emailsend', emailSend);
-api.post('/v1/media', upload.single('media'), uploadImage);
+api.post('/v1/media', upload.single('image'), uploadImage);
 api.get('/v1/media/:media', loadImage);
 api.get('/v1/post', loadPost);
 api.post('/v1/post', writePost);
