@@ -4,7 +4,7 @@ import { tokenToString } from "typescript";
 dotenv.config();
 
 export const jwtsign = (async (id) => {
-  const token : string = jwt.sign({ id: `${id}` },process.env.jwtkey);
+  const token : string = jwt.sign({ id: `${id}` },process.env.jwtkey,{expiresIn: '60m'});
   return token;
 });
 
