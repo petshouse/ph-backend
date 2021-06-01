@@ -77,7 +77,6 @@ export const signUp = (async (ctx) => {
 export const login = (async (ctx) => { 
   const { email, password } = ctx.request.body;
   let status : number, body : object;
-  let accessToken, refreshToken;
 
  // const pass = crypto.createHmac('sha256', process.env.secret).update(`${password}`).digest('hex');
   
@@ -243,8 +242,7 @@ export const checkVerification = (async (ctx) => {
 });
 
 export const uploadImage = (async (ctx) => { 
-  const { accesstoken } = ctx.header.accesstoken;
-  const authentication = await jwtverify(ctx.header.accesstoken);
+  const accesstoken = ctx.header.accesstoken;
   const fileName = ctx.request.file != undefined ? ctx.request.file.filename : undefined;
   let body : object, status : number; 
 
@@ -349,15 +347,19 @@ export const writePost = (async (ctx) => {
   let status : number, body : object;
   const uid:any = await jwtverify(accesstoken);
 
+  console.log(accesstoken);
+
   const token = await getConnection()
   .createQueryBuilder()
   .select("token")
   .from(Token, "token")
-  .where("accessToken = :accesstoken", {accesstoken : accesstoken})
+  .where("token.accessToken = :accesstoken", {accesstoken : accesstoken})
   .getOne()
 
+  console.log(token);
+
   if(token !== undefined){
-    await getConnection()
+    await getConnection() 
     .createQueryBuilder()
     .insert()
     .into(Post)
