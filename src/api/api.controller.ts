@@ -347,16 +347,12 @@ export const writePost = (async (ctx) => {
   let status : number, body : object;
   const uid:any = await jwtverify(accesstoken);
 
-  console.log(accesstoken);
-
   const token = await getConnection()
   .createQueryBuilder()
   .select("token")
   .from(Token, "token")
   .where("token.accessToken = :accesstoken", {accesstoken : accesstoken})
   .getOne()
-
-  console.log(token);
 
   if(token !== undefined){
     await getConnection() 
